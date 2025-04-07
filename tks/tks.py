@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog, messagebox
 
 FRAME_PAD_X=1
@@ -32,6 +33,8 @@ class Tks():
         # Create top frame
         self.frame_top = self.CreateFrame(self.frame_root)['frame']
         self.check_button_var_dict = {}
+        self.check_combobox_var_dict = {}
+        self.check_combobox_values_dict = {}
         return 
 
     # Get Default values
@@ -143,3 +146,30 @@ class Tks():
         self.PackWidget(scrollbar, side=tk.RIGHT, fill=tk.Y)
         text.config(yscrollcommand=scrollbar.set)
         return {'frame':frame, 'text':text, 'scrollbar':scrollbar}
+
+    def AddDropdownItem(self, event, wgt, var_name):
+        var = self.check_combobox_var_dict[var_name]
+        options = self.check_combobox_values_dict[var_name]
+        opt = var.get().strip()
+        if opt and opt not in options:
+            self.check_combobox_values_dict[var_name].append(opt)
+            wgt["values"] = self.check_combobox_values_dict[var_name]
+
+    def CreateDropdownList(self, root, label_str, dropdown_info, auto_add=False):
+        frame = tk.Frame(root)
+        self.PackFrame(frame, fill=tk.BOTH, expand=1)
+        label = tk.Label(frame, text=label_str, width=LABEL_WIDTH)
+        self.PackWidget(label)
+        var_name = dropdown_info['var']
+        var = tk.StringVar()
+        options = dropdown_info['values']
+        dropdown = ttk.Combobox(frame, textvariable=var, values=options, state='readonly')
+        if auto_add == False:
+            dropdown = ttk.Combobox(frame, textvariable=var, values=options, state='readonly')
+        else:
+            dropdown = ttk.Combobox(frame, textvariable=var)
+            dropdown.bind("<Return>", lambda event: self.AddDropdownItem(event, dropdown, var_name))
+        self.check_combobox_var_dict.update({var_name:var})
+        self.check_combobox_values_dict.update({var_name:options})
+        self.PackWidget(dropdown, fill=tk.X, expand=1)
+        return {'frame':frame, 'label':label, 'combobox':dropdown}
