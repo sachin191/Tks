@@ -3,6 +3,9 @@ from tkinter import ttk
 from tkinter import filedialog, messagebox
 from tkcalendar import DateEntry
 
+# Global variables
+g_DEBUG = 0
+
 FRAME_PAD_X=1
 FRAME_PAD_Y=1
 
@@ -67,7 +70,7 @@ class Tks():
         if (side != ""): frame.pack(side=side)
         if (fill != ""): frame.pack(fill=fill)
         if (expand != ""): frame.pack(expand=expand)
-        if (debug):
+        if (debug or g_DEBUG):
             print(f"Frame side:'{side}' fill:'{fill}' expand:'{expand}'")
         return
 
@@ -178,7 +181,7 @@ class Tks():
 
     def CreateDateEntry(self, root, label_str):
         frame = tk.Frame(root)
-        self.PackFrame(frame, fill=tk.BOTH, expand=1)
+        self.PackFrame(frame)
         label = tk.Label(frame, text=label_str, width=LABEL_WIDTH)
         self.PackWidget(label)
         date_wgt = DateEntry(frame)
