@@ -71,7 +71,7 @@ class Tks():
         if (side != ""): frame.pack(side=side)
         if (fill != ""): frame.pack(fill=fill)
         if (expand != ""): frame.pack(expand=expand)
-        if (debug or g_DEBUG):
+        if (g_DEBUG or debug):
             print(f"Frame side:'{side}' fill:'{fill}' expand:'{expand}'")
         return
 
@@ -85,9 +85,56 @@ class Tks():
         if (side != ""): wgt.pack(side=side)
         if (fill != ""): wgt.pack(fill=fill)
         if (expand != ""): wgt.pack(expand=expand)
-        if (debug):
+        if (g_DEBUG or debug):
             print(f"Widget side:'{side}' fill:'{fill}' expand:'{expand}'")
         return
+
+    def CreateFrameGrid(self, root, frame_grid_info, debug=0):
+        num_rows=frame_grid_info['rows']
+        num_cols=frame_grid_info['cols']
+        frame_list = []
+        for r in range(num_rows):
+            for c in range(num_cols):
+                frame = tk.Frame(root, borderwidth=2, relief="ridge", padx=10, pady=10)
+                frame.grid(row=r, column=c, padx=5, pady=5, sticky="nsew")
+
+                # Optional: Fill each frame with a label or widgets
+                if (g_DEBUG or debug):
+                    label = tk.Label(frame, text=f"Frame {r},{c}", font=("Arial", 12))
+                    label.pack()
+
+                # Save frame if needed later
+                frame_list.append(frame)
+
+        # Make the grid expand with window resize
+        for r in range(self.rows):
+            root.grid_rowconfigure(r, weight=1)
+        for c in range(self.cols):
+            root.grid_columnconfigure(c, weight=1)
+        return {'frame_list':frame_list}
+
+    def CreateFramePack(self, root, frame_grid_info, debug=0):
+        num_rows=frame_grid_info['rows']
+        num_cols=frame_grid_info['cols']
+        frame_list = []
+        for r in range(num_rows):
+            row_frame = tk.Frame(root)
+            row_frame.pack(side="top", fill="both", expand=True)
+
+            for c in range(num_cols):
+                cell_frame = tk.Frame(
+                    row_frame, borderwidth=2, relief="ridge", padx=10, pady=10
+                )
+                cell_frame.pack(side="left", fill="both", expand=True)
+
+                if (True or g_DEBUG or debug):
+                    # Optional: add content to each cell
+                    label = tk.Label(cell_frame, text=f"Frame {r},{c}")
+                    label.pack()
+
+                # Save frame if needed later
+                frame_list.append(cell_frame)
+        return {'frame_list':frame_list}
 
     def CreateFramedEntry(self, root, label_str, entry_width=''):
         frame = tk.Frame(root)
