@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
 from tkcalendar import DateEntry
+from PIL import Image, ImageTk
 
 # Global variables
 g_DEBUG = 0
@@ -25,6 +26,7 @@ TEXT_HEIGHT=10
 # 4. Add drop down list
 # 5. Add drop down list widget with values get added as entered by user
 # 6. Add List item seletion widgte width scorll bars
+# 7. * Fix imagepack function to remove self varibales (should not be based on index for sure)
 
 # Utlity for creating TkInter GUI Applications
 class Tks():
@@ -40,6 +42,8 @@ class Tks():
         self.check_combobox_var_dict = {}
         self.check_combobox_values_dict = {}
         self.check_dateentry_values_dict = {}
+        self.store_imagepack_label_list = []
+        # self.store_imagepack_frame_list = []
         return 
 
     # -------------------------------------------------------------------------
@@ -131,7 +135,7 @@ class Tks():
                 )
                 cell_frame.pack(side="left", fill="both", expand=True)
 
-                if (True or g_DEBUG or debug):
+                if (g_DEBUG or debug):
                     # Optional: add content to each cell
                     label = tk.Label(cell_frame, text=f"Frame {r},{c}")
                     label.pack()
@@ -250,3 +254,53 @@ class Tks():
         return {'frame':frame, 'label':label, 'dateentry':date_wgt}
 
     # -------------------------------------------------------------------------
+    def CreateImagePack(self, root, image_grid_info):
+        rows=image_grid_info['rows']
+        cols=image_grid_info['cols']
+        image_paths=image_grid_info['image_paths']
+        self.build_image_pack(root, rows, cols, image_paths)
+        root.bind("<Configure>", lambda event: self.on_resize_image_pack(event, root, rows, cols, image_paths))
+
+    def build_image_pack(self, root, rows, cols, image_paths):
+        self.store_imagepack_label_list = []
+        self.store_imagepack_frame_list = []
+        idx = 0
+        for r in range(rows):
+            row_frame = tk.Frame(root)
+            row_frame.pack(side="top", fill="both", expand=True)
+
+            for c in range(cols):
+                if idx < len(image_paths):
+                    img = Image.open(image_paths[idx])
+                    # self.original_images.append(img)
+
+                    img_frame = tk.Frame(row_frame, borderwidth=0, relief="solid")
+                    img_frame.pack(side="left", fill="both", expand=True)
+
+                    label = tk.Label(img_frame)
+                    label.pack(fill="both", expand=True)
+                    self.store_imagepack_label_list.append((label, img))
+                    # self.store_imagepack_frame_list.append(img_frame)
+                    idx += 1
+
+    def on_resize_image_pack(self, event, root, rows, cols, image_paths):
+        if event.widget == root:
+            # Get the current window size
+            window_width = event.width
+            window_height = event.height
+            # print(f"Window: width:{window_width} height:{window_height}")
+
+            # Calculate the new image size based on window size
+            new_width = int(window_width / cols)
+            new_height = int(window_height / rows)
+            # print(f"Image: width:{new_width} height:{new_height}")
+
+            # Resize each image to fit the new size
+            for idx, (label, original) in enumerate(self.store_imagepack_label_list):
+                resized_img = original.resize((new_width, new_height))
+                photo = ImageTk.PhotoImage(resized_img)
+                label.configure(image=photo)
+                label.image = photo  # Prevent garbage collection
+
+    # -------------------------------------------------------------------------
+
