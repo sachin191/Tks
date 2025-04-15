@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
+from tkcalendar import DateEntry
 
 FRAME_PAD_X=1
 FRAME_PAD_Y=1
@@ -173,3 +174,13 @@ class Tks():
         self.check_combobox_values_dict.update({var_name:options})
         self.PackWidget(dropdown, fill=tk.X, expand=1)
         return {'frame':frame, 'label':label, 'combobox':dropdown}
+
+
+    def CreateDateEntry(self, root, label_str):
+        frame = tk.Frame(root)
+        self.PackFrame(frame, fill=tk.BOTH, expand=1)
+        label = tk.Label(frame, text=label_str, width=LABEL_WIDTH)
+        self.PackWidget(label)
+        date_wgt = DateEntry(frame)
+        self.PackWidget(date_wgt)
+        return {'frame':frame, 'label':label, 'dateentry':date_wgt}
