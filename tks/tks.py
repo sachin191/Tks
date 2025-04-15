@@ -42,6 +42,7 @@ class Tks():
         self.check_dateentry_values_dict = {}
         return 
 
+    # -------------------------------------------------------------------------
     # Get Default values
     def GetDeafultFramePadX(self):
         return(FRAME_PAD_X)
@@ -60,12 +61,14 @@ class Tks():
     def GetDeafultTextHeight(self):
         return(TEXT_HEIGHT)
 
+    # -------------------------------------------------------------------------
     def GetFrameRoot(self):
         return self.frame_root
     
     def GetFrameTop(self):
         return self.frame_top
 
+    # -------------------------------------------------------------------------
     def PackFrame(self, frame, padx=FRAME_PAD_X, pady=FRAME_PAD_Y, side="", fill=tk.X, expand="", debug=0):
         frame.pack(padx=padx, pady=pady)
         if (side != ""): frame.pack(side=side)
@@ -89,6 +92,7 @@ class Tks():
             print(f"Widget side:'{side}' fill:'{fill}' expand:'{expand}'")
         return
 
+    # -------------------------------------------------------------------------
     def CreateFrameGrid(self, root, frame_grid_info, debug=0):
         num_rows=frame_grid_info['rows']
         num_cols=frame_grid_info['cols']
@@ -136,6 +140,7 @@ class Tks():
                 frame_list.append(cell_frame)
         return {'frame_list':frame_list}
 
+    # -------------------------------------------------------------------------
     def CreateFramedEntry(self, root, label_str, entry_width=''):
         frame = tk.Frame(root)
         self.PackFrame(frame)
@@ -146,6 +151,7 @@ class Tks():
         self.PackWidget(entry)
         return {'frame':frame, 'label':label, 'entry':entry}
 
+    # -------------------------------------------------------------------------
     def CreateFramedFileSelect(self, root, label_str, button_str, cmd):
         frame = tk.Frame(root)
         self.PackFrame(frame)
@@ -157,6 +163,7 @@ class Tks():
         self.PackWidget(button)
         return {'frame':frame, 'label':label, 'entry':entry, 'button':button}
 
+    # -------------------------------------------------------------------------
     def CreateFramedButtons(self, root, label_str, button_list,
                             side=tk.LEFT, fill="", expand =""):
         frame = tk.Frame(root)
@@ -170,6 +177,7 @@ class Tks():
             self.PackWidget(button, side=side, fill=fill, expand=expand)
         return {'frame':frame, 'label':label, 'button':button}
 
+    # -------------------------------------------------------------------------
     def CreateFramedCheckButtons(self, root, label_str, chk_button_param_list,
                                  side=tk.LEFT, fill="", expand =""):
         frame = tk.Frame(root)
@@ -189,6 +197,7 @@ class Tks():
             self.PackWidget(chk_button_wgt, side=side, fill=fill, expand=expand)
         return {'frame':frame, 'label':label, 'check_button':chk_button_wgt_list}
         
+    # -------------------------------------------------------------------------
     def CreateFramedTextWithScrollBar(self, root):
         frame = tk.Frame(root)
         self.PackFrame(frame, fill=tk.BOTH, expand=1)
@@ -199,6 +208,7 @@ class Tks():
         text.config(yscrollcommand=scrollbar.set)
         return {'frame':frame, 'text':text, 'scrollbar':scrollbar}
 
+    # -------------------------------------------------------------------------
     def AddDropdownItem(self, event, wgt, var_name):
         var = self.check_combobox_var_dict[var_name]
         options = self.check_combobox_values_dict[var_name]
@@ -207,6 +217,7 @@ class Tks():
             self.check_combobox_values_dict[var_name].append(opt)
             wgt["values"] = self.check_combobox_values_dict[var_name]
 
+    # -------------------------------------------------------------------------
     def CreateDropdownList(self, root, label_str, dropdown_info, auto_add=False):
         frame = tk.Frame(root)
         self.PackFrame(frame, fill=tk.BOTH, expand=1)
@@ -226,7 +237,7 @@ class Tks():
         self.PackWidget(dropdown, fill=tk.X, expand=1)
         return {'frame':frame, 'label':label, 'combobox':dropdown}
 
-
+    # -------------------------------------------------------------------------
     def CreateDateEntry(self, root, label_str, date_entry_info):
         frame = tk.Frame(root)
         self.PackFrame(frame)
@@ -237,3 +248,5 @@ class Tks():
         var_name = date_entry_info['var']
         self.check_dateentry_values_dict.update({var_name:date_wgt})
         return {'frame':frame, 'label':label, 'dateentry':date_wgt}
+
+    # -------------------------------------------------------------------------
