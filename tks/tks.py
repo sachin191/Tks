@@ -39,6 +39,7 @@ class Tks():
         self.check_button_var_dict = {}
         self.check_combobox_var_dict = {}
         self.check_combobox_values_dict = {}
+        self.check_dateentry_values_dict = {}
         return 
 
     # Get Default values
@@ -179,11 +180,13 @@ class Tks():
         return {'frame':frame, 'label':label, 'combobox':dropdown}
 
 
-    def CreateDateEntry(self, root, label_str):
+    def CreateDateEntry(self, root, label_str, date_entry_info):
         frame = tk.Frame(root)
         self.PackFrame(frame)
         label = tk.Label(frame, text=label_str, width=LABEL_WIDTH)
         self.PackWidget(label)
         date_wgt = DateEntry(frame)
         self.PackWidget(date_wgt)
+        var_name = date_entry_info['var']
+        self.check_dateentry_values_dict.update({var_name:date_wgt})
         return {'frame':frame, 'label':label, 'dateentry':date_wgt}
