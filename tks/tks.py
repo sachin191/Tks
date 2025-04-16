@@ -42,8 +42,9 @@ class Tks():
         self.check_combobox_var_dict = {}
         self.check_combobox_values_dict = {}
         self.check_dateentry_values_dict = {}
+        self.store_treeview_items_dict = {}
+        self.store_treeview_sorted_column = {}
         self.store_imagepack_label_list = []
-        # self.store_imagepack_frame_list = []
         return 
 
     # -------------------------------------------------------------------------
@@ -258,12 +259,14 @@ class Tks():
         rows=image_grid_info['rows']
         cols=image_grid_info['cols']
         image_paths=image_grid_info['image_paths']
-        self.build_image_pack(root, rows, cols, image_paths)
+        return_widgets = self.build_image_pack(root, rows, cols, image_paths)
         root.bind("<Configure>", lambda event: self.on_resize_image_pack(event, root, rows, cols, image_paths))
+        return(return_widgets)
 
     def build_image_pack(self, root, rows, cols, image_paths):
         self.store_imagepack_label_list = []
-        self.store_imagepack_frame_list = []
+        label_list = []
+        frame_list = []
         idx = 0
         for r in range(rows):
             row_frame = tk.Frame(root)
@@ -280,8 +283,10 @@ class Tks():
                     label = tk.Label(img_frame)
                     label.pack(fill="both", expand=True)
                     self.store_imagepack_label_list.append((label, img))
-                    # self.store_imagepack_frame_list.append(img_frame)
+                    label_list.append((label, img))
+                    frame_list.append(img_frame)
                     idx += 1
+        return {'frame_list':frame_list, 'label_list':label_list}
 
     def on_resize_image_pack(self, event, root, rows, cols, image_paths):
         if event.widget == root:
@@ -301,6 +306,74 @@ class Tks():
                 photo = ImageTk.PhotoImage(resized_img)
                 label.configure(image=photo)
                 label.image = photo  # Prevent garbage collection
+        return
 
     # -------------------------------------------------------------------------
+    def CreateScolledItemList(self, root, scrolled_item_info):
+        # Frame for the treeview and scrollbar
+        title = scrolled_item_info['title']
+        frame = tk.Frame(root)
+        frame.pack(padx=10, pady=10, fill="both", expand=True)
 
+        # Scrollbar for the Treeview
+        scrollbar = tk.Scrollbar(frame)
+        scrollbar.pack(side="right", fill="y")
+
+        # Treeview to display the list (with multiple columns)
+        headings = scrolled_item_info['headings']
+        column_headings=[hinfo[0] for hinfo in headings]
+        # print(f"ColumnHeadings: {column_headings}")
+        treeview = ttk.Treeview(frame, columns=column_headings, show="headings", selectmode="extended")
+        treeview.pack(fill="both", expand=True)
+
+        # Configure columns and headings
+        idx = 0
+        for hinfo in headings:
+            name = hinfo[0]
+            width = hinfo[1]
+            anchor = hinfo[2]
+            print(f"hinfo:{hinfo} name:{name} width:{width} anchor:{anchor}" )
+            treeview.heading(name, text=name, command=lambda: self.sort_column_scrolled_itemlist(title, column_headings, treeview, name, idx))
+            treeview.column(name, width=width)
+            if anchor != '':
+                treeview.column(name, anchor=anchor)
+            idx+=1
+
+        # Attach scrollbar to treeview
+        scrollbar.config(command=treeview.yview)
+        treeview.config(yscrollcommand=scrollbar.set)
+
+        # Populate the Treeview with initial items
+        items = scrolled_item_info['items']
+        for item in items:
+            treeview.insert("", "end", values=item)
+
+        self.store_treeview_items_dict.update({title:items})
+        self.store_treeview_sorted_column.update({title:''})
+
+        return {'frame':frame, 'treeview':treeview, 'scrollbar':scrollbar}
+
+    def sort_column_scrolled_itemlist(self, title, column_headings, treeview, column, idx):
+        # Sort the items by the selected column
+        print(f"Pre: {self.store_treeview_items_dict}")
+        index = column_headings.index(column)
+        print(f"column_headings:{column_headings}, column:{column} Index:{index} Idx:{idx}")
+        items = self.store_treeview_items_dict[title]
+        sorted_column = self.store_treeview_sorted_column[title]
+        items.sort(key=lambda x: x[index].lower(), reverse=sorted_column == column)
+
+        # Update the sorted column
+        self.store_treeview_sorted_column=({title:column})
+
+        # Clear the existing list and re-insert the sorted items
+        for row in treeview.get_children():
+            treeview.delete(row)
+
+        for item in items:
+            treeview.insert("", "end", values=item)
+
+        self.store_treeview_items_dict.update({title:items})
+        print(f"Post: {self.store_treeview_items_dict}")
+        return
+
+    # -------------------------------------------------------------------------
