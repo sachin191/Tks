@@ -44,7 +44,7 @@ class Tks():
         self.check_combobox_values_dict = {}
         self.check_dateentry_values_dict = {}
         self.store_treeview_items_dict = {}
-        self.store_treeview_sorted_column = {}
+        self.store_treeview_sorted_column_dict = {}
         self.store_imagepack_label_list = []
         return 
 
@@ -294,12 +294,10 @@ class Tks():
             # Get the current window size
             window_width = event.width
             window_height = event.height
-            # print(f"Window: width:{window_width} height:{window_height}")
 
             # Calculate the new image size based on window size
             new_width = int(window_width / cols)
             new_height = int(window_height / rows)
-            # print(f"Image: width:{new_width} height:{new_height}")
 
             # Resize each image to fit the new size
             for idx, (label, original) in enumerate(self.store_imagepack_label_list):
@@ -350,22 +348,19 @@ class Tks():
             treeview.insert("", "end", values=item)
 
         self.store_treeview_items_dict.update({title:items})
-        self.store_treeview_sorted_column.update({title:''})
+        self.store_treeview_sorted_column_dict.update({title:''})
 
         return {'frame':frame, 'treeview':treeview, 'scrollbar':scrollbar}
 
     def sort_column_scrolled_itemlist(self, column, treeview, title, column_headings):
         # Sort the items by the selected column
-        # print(f"Pre: {self.store_treeview_items_dict}")
         index = column_headings.index(column)
-        # print(f"column:{column} column_headings:{column_headings} index:{index} ")
         items = self.store_treeview_items_dict[title]
-        sorted_column = self.store_treeview_sorted_column[title]
+        sorted_column = self.store_treeview_sorted_column_dict[title]
         items.sort(key=lambda x: x[index].lower(), reverse=sorted_column == column)
-        # print(f"Post: {self.store_treeview_items_dict}")
 
         # Update the sorted column
-        self.store_treeview_sorted_column=({title:column})
+        self.store_treeview_sorted_column_dict.update({title:column})
 
         # Clear the existing list and re-insert the sorted items
         for row in treeview.get_children():
