@@ -34,6 +34,7 @@ class Tks():
         # Create root frame
         self.frame_root = tk.Tk()
         self.frame_root.title(title)
+        self.frame_root.geometry(f"{width}x{height}")
         self.frame_root.minsize(width, height)
 
         # Create top frame
@@ -332,7 +333,7 @@ class Tks():
             name = hinfo[0]
             width = hinfo[1]
             anchor = hinfo[2]
-            print(f"hinfo:{hinfo} name:{name} width:{width} anchor:{anchor}" )
+            # print(f"hinfo:{hinfo} name:{name} width:{width} anchor:{anchor}" )
             treeview.heading(name, text=name, command=lambda: self.sort_column_scrolled_itemlist(title, column_headings, treeview, name, idx))
             treeview.column(name, width=width)
             if anchor != '':
@@ -355,9 +356,9 @@ class Tks():
 
     def sort_column_scrolled_itemlist(self, title, column_headings, treeview, column, idx):
         # Sort the items by the selected column
-        print(f"Pre: {self.store_treeview_items_dict}")
+        # print(f"Pre: {self.store_treeview_items_dict}")
         index = column_headings.index(column)
-        print(f"column_headings:{column_headings}, column:{column} Index:{index} Idx:{idx}")
+        # print(f"column_headings:{column_headings}, column:{column} Index:{index} Idx:{idx}")
         items = self.store_treeview_items_dict[title]
         sorted_column = self.store_treeview_sorted_column[title]
         items.sort(key=lambda x: x[index].lower(), reverse=sorted_column == column)
@@ -373,7 +374,7 @@ class Tks():
             treeview.insert("", "end", values=item)
 
         self.store_treeview_items_dict.update({title:items})
-        print(f"Post: {self.store_treeview_items_dict}")
+        # print(f"Post: {self.store_treeview_items_dict}")
         return
 
     # -------------------------------------------------------------------------
