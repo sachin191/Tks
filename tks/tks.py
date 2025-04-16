@@ -333,8 +333,8 @@ class Tks():
             name = hinfo[0]
             width = hinfo[1]
             anchor = hinfo[2]
-            # print(f"hinfo:{hinfo} name:{name} width:{width} anchor:{anchor}" )
-            treeview.heading(name, text=name, command=lambda: self.sort_column_scrolled_itemlist(title, column_headings, treeview, name, idx))
+            # print(f"hinfo:{hinfo} name:{name} width:{width} anchor:{anchor} idx:{idx}" )
+            treeview.heading(name, text=name, command=lambda col=idx: self.sort_column_scrolled_itemlist(headings[col][0], treeview, title, column_headings))
             treeview.column(name, width=width)
             if anchor != '':
                 treeview.column(name, anchor=anchor)
@@ -354,14 +354,15 @@ class Tks():
 
         return {'frame':frame, 'treeview':treeview, 'scrollbar':scrollbar}
 
-    def sort_column_scrolled_itemlist(self, title, column_headings, treeview, column, idx):
+    def sort_column_scrolled_itemlist(self, column, treeview, title, column_headings):
         # Sort the items by the selected column
         # print(f"Pre: {self.store_treeview_items_dict}")
         index = column_headings.index(column)
-        # print(f"column_headings:{column_headings}, column:{column} Index:{index} Idx:{idx}")
+        # print(f"column:{column} column_headings:{column_headings} index:{index} ")
         items = self.store_treeview_items_dict[title]
         sorted_column = self.store_treeview_sorted_column[title]
         items.sort(key=lambda x: x[index].lower(), reverse=sorted_column == column)
+        # print(f"Post: {self.store_treeview_items_dict}")
 
         # Update the sorted column
         self.store_treeview_sorted_column=({title:column})
@@ -373,8 +374,8 @@ class Tks():
         for item in items:
             treeview.insert("", "end", values=item)
 
+        # Update the sorted data
         self.store_treeview_items_dict.update({title:items})
-        # print(f"Post: {self.store_treeview_items_dict}")
         return
 
     # -------------------------------------------------------------------------
